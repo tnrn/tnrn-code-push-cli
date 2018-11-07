@@ -28,13 +28,14 @@ import {
 } from './package'
 import {
   listVersions,
-  publish
+  publish,
+  changeReleaseType
 } from './versions'
 import {
   bundleApp
 } from './bundle'
 const program = require('./_commander')
-const NOOP = function () {}
+const NOOP = function () { }
 
 const PACKAGE_JSON_PATH = function () {
   return path.resolve(
@@ -95,7 +96,7 @@ const cmd = () => {
           return 'Please enter a valid password (6-20)'
         }
       }
-      ]).then(async(answers) => {
+      ]).then(async (answers) => {
         const {
           email,
           password
@@ -111,7 +112,7 @@ const cmd = () => {
   program
     .command('register')
     .description('Register a new rnkit-code-push account')
-    .action(async() => {
+    .action(async () => {
       open('https://update.rnkit.io')
       process.exit(-1)
     })
@@ -119,7 +120,7 @@ const cmd = () => {
   program
     .command('logout')
     .description('Log out of the current session')
-    .action(async() => {
+    .action(async () => {
       try {
         await logout()
       } catch (error) {
@@ -130,7 +131,7 @@ const cmd = () => {
   program
     .command('whoami')
     .description('Display the account info for the current login session')
-    .action(async() => {
+    .action(async () => {
       try {
         await me()
       } catch (error) {
@@ -143,7 +144,7 @@ const cmd = () => {
     .option('list', 'Lists the apps associated with your account')
     .option('ls', 'Lists the apps associated with your account')
     .description('View and manage your rnkit-code-push apps')
-    .action(async(arg) => {
+    .action(async (arg) => {
       if (arg === 'list' || arg === 'ls') {
         try {
           const data = await listApp()
@@ -169,7 +170,7 @@ const cmd = () => {
     .command('bindApp <platform>')
     .description('The binding is applied to the current project with platform')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(platform, options) => {
+    .action(async (platform, options) => {
       try {
         const result = checkPlatform(platform)
         const data = await listApp(result === 'ios' ? 1 : 2)
@@ -188,7 +189,7 @@ const cmd = () => {
           name: 'app',
           message: 'Please Choose App :',
           choices: list
-        } ]).then(async(answers) => {
+        }]).then(async (answers) => {
           try {
             const obj = data.find(v => v.name === answers.app)
             await selectApp(obj.name, obj.key, platform, options.app_key_path)
@@ -207,7 +208,7 @@ const cmd = () => {
     .command('uploadIpa <ipaFilePath>')
     .description('upload ios ipa file to rnkit code push server')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(ipaFilePath, options) => {
+    .action(async (ipaFilePath, options) => {
       try {
         await uploadIpa(ipaFilePath, options.app_key_path)
       } catch (error) {
@@ -231,7 +232,7 @@ const cmd = () => {
     .command('packages <platform>')
     .description('View the packages for a running app')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(platform, options) => {
+    .action(async (platform, options) => {
       try {
         await checkPlatform(platform)
         const app_info = await getSelectedApp(platform, options.app_key_path)
@@ -257,11 +258,24 @@ const cmd = () => {
     .command('versions <platform>')
     .description('View the versions for a running app')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(platform, options) => {
+    .action(async (platform, options) => {
       try {
         await checkPlatform(platform)
         const app_info = await getSelectedApp(platform, options.app_key_path)
         await listVersions(app_info.appKey)
+      } catch (error) {
+        console.log(colors.red(error.message))
+      }
+    })
+
+  program
+    .command('updateVersion <platform> <release_type>')
+    .description('update the version with a release_type [Development, FullReleased]')
+    .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
+    .action(async (platform, release_type, options) => {
+      try {
+        const app_info = await getSelectedApp(platform, options.app_key_path)
+        await changeReleaseType(app_info.appKey, release_type)
       } catch (error) {
         console.log(colors.red(error.message))
       }
@@ -279,7 +293,7 @@ const cmd = () => {
       console.log(colors.magenta('  $rnkit-code-push --platform ios --ppkFile /data/my-app/build/output/android.xxxxx.ppk'))
       console.log('')
     })
-    .action(async(args) => {
+    .action(async (args) => {
       try {
         await publish(args)
       } catch (error) {
@@ -292,7 +306,7 @@ const cmd = () => {
     .description('deployment version to packages')
     .option('-p --platform <platform>', 'platform ios|android')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(args) => {
+    .action(async (args) => {
       try {
         await deployment(args.platform, args.app_key_path)
       } catch (error) {
@@ -310,7 +324,7 @@ const cmd = () => {
     .option('--intermediaDir <intermediaDir>', 'tmp file out dir')
     .option('--verbose <verbose>', 'Enables logging')
     .option('-k, --app_key_path <app_key_path>', 'the json file path of app_key')
-    .action(async(args) => {
+    .action(async (args) => {
       try {
         await bundleApp(args)
       } catch (error) {

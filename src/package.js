@@ -8,20 +8,37 @@ const {
 import { getSelectedApp } from './app'
 import { getIPAVersion, getApkVersion } from './utils'
 
-export async function listPackage (app_key) {
+export async function listPackage(app_key) {
   const { data } = await get(`/package/list?app_key=${app_key}`)
   // console.log(data);
   return data
 }
 
-export async function choosePackage (appId) {
-  const list = await listPackage(appId)
-  const packages = list.map((pack, index) => `AppVerion: ${colors.blue(pack.app_version)} > PackageName: ${colors.blue(pack.name)}`)
-  const bind_packages_result = await inquire.list('checkbox', 'Please Choose Bind Packages :', packages)
+export async function choosePackage(appId, packageName) {
   const package_keys = []
-  bind_packages_result.index.forEach((index) => {
-    package_keys.push(list[index].key)
-  })
+  const list = await listPackage(appId)
+  // const packages = list.map((pack, index) => `AppVerion: ${colors.blue(pack.app_version)} > PackageName: ${colors.blue(pack.name)}`)
+  // const bind_packages_result = await inquire.list('checkbox', 'Please Choose Bind Packages :', packages)
+  // bind_packages_result.index.forEach((index) => {
+  //   package_keys.push(list[index].key)
+  // })
+  // 指定绑定version
+  if (packageName) {
+    list.forEach((item) => {
+      if (item.name === packageName) {
+        package_keys.push(item.key)
+        console.log(colors.green(`choosePackage: PackageName=${item.name} AppVersion=${item.app_version}`))
+      }
+    })
+  }
+  if (package_keys.length == 0) {
+    list.forEach((item, index) => {
+      if (index === 0) {
+        package_keys.push(item.key)
+        console.log(colors.green(`choosePackage: PackageName=${item.name} AppVersion=${item.app_version}`))
+      }
+    })
+  }
   return package_keys.join(',')
 }
 
@@ -29,7 +46,7 @@ export async function uploadIpa(filePath, app_key_path) {
   if (!filePath) {
     throw new Error('Usage: rnkit-code-push uploadIpa <ipaFile>')
   }
-  const app_version = await getIPAVersion(filePath)
+  const { app_version, app_name } = await getIPAVersion(filePath)
   const { appKey } = await getSelectedApp('ios', app_key_path)
 
   const { hash, name } = await uploadFile(filePath)
@@ -39,7 +56,7 @@ export async function uploadIpa(filePath, app_key_path) {
     hash,
     file_name: name,
     app_version: app_version,
-    name: app_version
+    name: app_name
   })
   console.log('Ipa uploaded')
 }

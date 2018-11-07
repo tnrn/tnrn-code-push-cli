@@ -157,18 +157,19 @@ export async function bundleApp (options) {
 
   console.log(colors.green('Packing'))
   await pack(realIntermedia, realOutput)
+  await publish({ platform, ppkFile: realOutput, app_key_path: options.app_key_path, package_name: options.package_name })
 
-  const { isPublish } = await inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'isPublish',
-      message: 'Would you like to publish it?',
-      default: false
-    }
-  ])
+  // const { isPublish } = await inquirer.prompt([
+  //   {
+  //     type: 'confirm',
+  //     name: 'isPublish',
+  //     message: 'Would you like to publish it?',
+  //     default: false
+  //   }
+  // ])
 
-  if (isPublish) {
-    console.log(colors.green('Publish'))
-    await publish({ platform, ppkFile: realOutput, app_key_path: options.app_key_path })
-  }
+  // if (isPublish) {
+  //   console.log(colors.green('Publish'))
+  //   await publish({ platform, ppkFile: realOutput, app_key_path: options.app_key_path })
+  // }
 }

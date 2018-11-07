@@ -41,6 +41,11 @@ export async function listApp (platform = '') {
   return data
 }
 
+export async function changeReleaseType (platform = '') {
+  const { data } = await get(`/app/list?page_size=20&platform=${platform}`)
+  return data
+}
+
 export async function chooseApp (platform) {
   const list = await listApp(platform)
 
