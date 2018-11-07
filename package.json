@@ -1,7 +1,7 @@
 {
-  "name": "rnkit-code-push-cli",
+  "name": "tnrn-code-push-cli",
   "description": "rnkit-code-push is command tools for react native",
-  "version": "1.0.9",
+  "version": "0.1.1",
   "preferGlobal": true,
   "author": {
     "name": "SimMan",
@@ -22,12 +22,13 @@
   },
   "contributors": [
     {
-      "name": "SimMan",
-      "email": "liwei0990@gmail.com"
+      "name": "winter",
+      "email": "winterw201501@gmail.com"
     }
   ],
   "main": "lib/index.js",
   "dependencies": {
+    "app-metadata": "^0.1.26",
     "asciify": "^1.3.5",
     "babel-runtime": "6.6.1",
     "cli-table2": "^0.2.0",
@@ -36,7 +37,6 @@
     "commander": "2.9.0",
     "fs-promise": "^0.5.0",
     "inquirer": "^1.1.3",
-    "ipa-metadata": "^1.4.0",
     "isomorphic-fetch": "^2.2.1",
     "mkdir-recursive": "^0.2.2",
     "moment": "^2.17.1",
@@ -82,7 +82,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/rnkit/rnkit-code-push-cli"
+    "url": "https://github.com/tnrn/tnrn-code-push-cli"
   },
   "engines": {
     "node": ">=0.12.0"
@@ -90,6 +90,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/rnkit/rnkit-code-push-cli/issues"
+    "url": "https://github.com/tnrn/tnrn-code-push-cli/issues"
   }
 }

@@ -1,11 +1,11 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import ApkReader from 'node-apk-parser'
-import ipaMetadata from 'ipa-metadata'
+import { Extract } from 'app-metadata';
 
 const read = require('read')
 
-export function question (query, password) {
+export function question(query, password) {
   return new Promise((resolve, reject) => read({
     prompt: query,
     silent: password,
@@ -13,7 +13,7 @@ export function question (query, password) {
   }, (err, result) => err ? reject(err) : resolve(result)))
 }
 
-export function translateOptions (options) {
+export function translateOptions(options) {
   const ret = {}
   for (const key in options) {
     const v = options[key]
@@ -27,7 +27,7 @@ export function translateOptions (options) {
 }
 
 // return { version: '0.27.2', major: 0, minor: 27 }
-export function getRNVersion () {
+export function getRNVersion() {
   const version = JSON.parse(fs.readFileSync(path.resolve('node_modules/react-native/package.json'))).version
 
   // We only care about major and minor version.
@@ -39,21 +39,26 @@ export function getRNVersion () {
   }
 }
 
-export function getRNPackage () {
+export function getRNPackage() {
   const pkg = JSON.parse(fs.readFileSync(path.resolve('package.json')))
   return pkg
 }
 
-export function getApkVersion (fn) {
+export function getApkVersion(fn) {
   const reader = ApkReader.readFile(fn)
   const manifest = reader.readManifestSync()
   return Promise.resolve(manifest.versionName)
 }
 
-export function getIPAVersion (fn) {
+export function getIPAVersion(fn) {
   return new Promise((resolve, reject) => {
-    ipaMetadata(fn, (err, data) => {
-      err ? reject(err) : resolve(data.metadata.CFBundleShortVersionString)
+    Extract.run(fn).then((res) => {
+      if (res.version) {
+        resolve({ app_version: res.version, app_name: res.displayName })
+      }
+      else {
+        reject()
+      }
     })
   })
 }
