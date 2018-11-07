@@ -1,6 +1,5 @@
 [![npm][npm-badge]][npm]
 [![MIT][license-badge]][license]
-[![bitHound Score][bithound-badge]][bithound]
 [![Build status](https://ci.appveyor.com/api/projects/status/l8sg6cvm176ce67p/branch/master?svg=true)][appveyor]
 [![Downloads](https://img.shields.io/npm/dm/tnrn-code-push-cli.svg)](https://www.npmjs.com/package/tnrn-code-push-cli)
 
