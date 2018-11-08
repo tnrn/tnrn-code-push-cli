@@ -104,9 +104,9 @@ async function getVersionOptions() {
   //   'GrayReleased',
   //   'ConditionsReleased'
   // ])
-  const release_type_result = 0//开发预览
+  const release_type_result =  { index: 0, value: 'Development' }//开发预览
   options.release_type = _.parseInt(release_type_result.index) + 1
-
+  
   // 灰度下发
   if (release_type_result.index === 2) {
     const gray_type_result = await inquire.list('rawlist', 'Please Choose Gray Type :', ['Percent', 'Count'])
